@@ -10,6 +10,7 @@ public class MapGenerator : MonoBehaviour
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
+    private const string NEWLINE = "\n";
 
     // Start is called before the first frame update
     void Start()
@@ -18,11 +19,12 @@ public class MapGenerator : MonoBehaviour
         {
             // convert the map data text file into a string
             string mazeStr = mazeFile.text;
+            Debug.Log("Original maze length: " + mazeStr.Length);
 
             // map starts at 0,0
             // also find out the dimensions using new line sub str
             // new line for max X, and divide that from the total character count to get the number of levels, Y
-            int width = mazeStr.IndexOf(System.Environment.NewLine);
+            int width = mazeStr.IndexOf(NEWLINE) + 1;
             int height = mazeStr.Length / width;
             int x = 0;
             int y = height - 1;
@@ -31,25 +33,28 @@ public class MapGenerator : MonoBehaviour
 
             // now that we already have dimensions, let's strip out new line
             // characters because it's impacting parsing
-            mazeStr = mazeStr.Replace(System.Environment.NewLine, "");
+            mazeStr = mazeStr.Replace("\n\n", NEWLINE);
+            Debug.Log("Formatted maze length: " + mazeStr.Length);
 
+            // iterate over each tile and build the map
             for (int i = 0; i < mazeStr.Length; i++)
             {
                 if (walls.Contains(mazeStr[i]))
                 {
+                    Debug.Log("Wall Found.");
                     // wall char found
                     // create a new wall
                     Instantiate(wallPrefab, new Vector3(x, y, 0f), Quaternion.identity);
                 }
                 else if (spaces.Contains(mazeStr[i]))
                 {
+                    Debug.Log("Space Found.");
                     // space found, open
                     // create a new space
                     Instantiate(spacePrefab, new Vector3(x, y, 0f), Quaternion.identity);
                 }
                 else
                 {
-                    Debug.Log("not a space OR wall found... " + mazeStr[i]);
                     if (mazeStr[i] == '\n') Debug.Log("New Line (n) Found.");
                     if (mazeStr[i] == '\r') Debug.Log("New Line (r) Found.");
                 }
