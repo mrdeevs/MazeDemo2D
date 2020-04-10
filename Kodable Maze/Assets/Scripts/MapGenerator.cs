@@ -10,6 +10,7 @@ public class MapGenerator : MonoBehaviour
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
+    private GameObject[,] maze;
     private const string NEWLINE = "\n";
     private Vector3 startingSpace = Vector3.zero;
 
@@ -28,6 +29,7 @@ public class MapGenerator : MonoBehaviour
             int height = mazeStr.Length / width;
             int x = 0;
             int y = height - 1;
+            maze = new GameObject[width - 1, height];
 
             // now that we already have dimensions, let's strip out new line
             // characters because it's impacting parsing
@@ -40,7 +42,7 @@ public class MapGenerator : MonoBehaviour
                 {
                     // wall char found
                     // create a new wall
-                    Instantiate(wallPrefab, new Vector3(x, y, 0f), Quaternion.identity);
+                    maze[x, y] = Instantiate(wallPrefab, new Vector3(x, y, 0f), Quaternion.identity);
                 }
                 else if (spaces.Contains(mazeStr[i]))
                 {
@@ -48,13 +50,12 @@ public class MapGenerator : MonoBehaviour
                     // create a new space
                     Vector3 spaceLoc = new Vector3(x, y, 0f);
 
-                    Instantiate(spacePrefab, spaceLoc, Quaternion.identity);
+                    maze[x, y] = Instantiate(spacePrefab, spaceLoc, Quaternion.identity);
 
                     // store and remember where we should place the player
-                    if(startingSpace == Vector3.zero)
+                    if (startingSpace == Vector3.zero)
                     {
                         startingSpace = spaceLoc;
-                        Debug.Log("starting space: " + startingSpace);
                     }
                 }
 
@@ -70,9 +71,11 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
-            // INIT PLAYER
-            // initialize the player at the top left (0, height)
+            // init player
             player.transform.position = startingSpace;
+
+            // todo test
+            maze[width - 2, 0].gameObject.GetComponent<SpriteRenderer>().color = Color.green;
         }
         else
         {
