@@ -10,7 +10,6 @@ public class MapGenerator : MonoBehaviour
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
-    private const string NEW_LINE = "\n";
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +22,7 @@ public class MapGenerator : MonoBehaviour
             // map starts at 0,0
             // also find out the dimensions using new line sub str
             // new line for max X, and divide that from the total character count to get the number of levels, Y
-            int width = mazeStr.IndexOf(NEW_LINE);
+            int width = mazeStr.IndexOf(System.Environment.NewLine);
             int height = mazeStr.Length / width;
             int x = 0;
             int y = height - 1;
@@ -32,8 +31,7 @@ public class MapGenerator : MonoBehaviour
 
             // now that we already have dimensions, let's strip out new line
             // characters because it's impacting parsing
-            // Note: do NOT remove the \r new line    .Replace("\r", "")
-            mazeStr = mazeStr.Replace("\n", "");
+            mazeStr = mazeStr.Replace(System.Environment.NewLine, "");
 
             for (int i = 0; i < mazeStr.Length; i++)
             {
@@ -49,6 +47,12 @@ public class MapGenerator : MonoBehaviour
                     // create a new space
                     Instantiate(spacePrefab, new Vector3(x, y, 0f), Quaternion.identity);
                 }
+                else
+                {
+                    Debug.Log("not a space OR wall found... " + mazeStr[i]);
+                    if (mazeStr[i] == '\n') Debug.Log("New Line (n) Found.");
+                    if (mazeStr[i] == '\r') Debug.Log("New Line (r) Found.");
+                }
 
                 // increment the x marker 
                 x++;
@@ -63,6 +67,7 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
+            // INIT PLAYER
             // initialize the player at the top left (0, height)
             player.transform.position = new Vector3(0f, height - 1, 0f);
         }
