@@ -6,6 +6,7 @@ public class MapGenerator : MonoBehaviour
 {
     public TextAsset mazeFile = null;
     public GameObject wallPrefab, spacePrefab;
+    public Player player;
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
@@ -26,12 +27,13 @@ public class MapGenerator : MonoBehaviour
             int height = mazeStr.Length / width;
             int x = 0;
             int y = height - 1;
+
             Debug.Log("map width : " + width + " map height : " + height + " input data length : " + mazeStr.Length);
 
             // now that we already have dimensions, let's strip out new line
             // characters because it's impacting parsing
-            mazeStr = mazeStr/*.Replace("\r", "")*/.Replace("\n", "");
-            Debug.Log("mazeStr after parsing: " + mazeStr);
+            // Note: do NOT remove the \r new line    .Replace("\r", "")
+            mazeStr = mazeStr.Replace("\n", "");
 
             for (int i = 0; i < mazeStr.Length; i++)
             {
@@ -40,7 +42,6 @@ public class MapGenerator : MonoBehaviour
                     // wall char found
                     // create a new wall
                     Instantiate(wallPrefab, new Vector3(x, y, 0f), Quaternion.identity);
-
                 }
                 else if (spaces.Contains(mazeStr[i]))
                 {
@@ -61,6 +62,9 @@ public class MapGenerator : MonoBehaviour
                     x = 0;
                 }
             }
+
+            // initialize the player at the top left (0, height)
+            player.transform.position = new Vector3(0f, height - 1, 0f);
         }
         else
         {
