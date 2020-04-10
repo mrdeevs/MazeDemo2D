@@ -26,7 +26,7 @@ public class MapGenerator : MonoBehaviour
             int height = mazeStr.Length / width;
             int x = 0;
             int y = height - 1;
-            Debug.Log("map width: " + width + " map height: " + height + " input data length: " + mazeStr.Length);
+            Debug.Log("map width : " + width + " map height : " + height + " input data length : " + mazeStr.Length);
 
             // now that we already have dimensions, let's strip out new line
             // characters because it's impacting parsing
