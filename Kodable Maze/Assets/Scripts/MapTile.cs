@@ -6,6 +6,7 @@ public class MapTile : MonoBehaviour
 {
     public bool alreadyVisited = false;
     public TileType type;
+    public int level;
 
     public enum TileType { Wall, Space }
 

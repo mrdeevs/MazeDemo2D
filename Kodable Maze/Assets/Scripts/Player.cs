@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
         if (mState == PlayerState.Moving && Time.unscaledTime - mLastMove > MovementInterval)
         {
             mLastMove = Time.unscaledTime;
-            GameObject nextTile = mMap.calculateNextMove(transform.position);
+            GameObject nextTile = mMap.calculateNextMove(mMap.getPlayerStart(), 1);
 
             // make sure its valid
             // otherwise we won't move til the next frame

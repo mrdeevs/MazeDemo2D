@@ -11,8 +11,8 @@ public class MazeMap : MonoBehaviour
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
     private GameObject[,] maze;
+    private MapTile startTile = null, endTile = null;
     private const string NEWLINE = "\n";
-    private Vector3 startingSpace = Vector3.zero;
     private int mWidth, mHeight;
 
     // Start is called before the first frame update
@@ -57,10 +57,11 @@ public class MazeMap : MonoBehaviour
 
                     maze[x, y] = Instantiate(spacePrefab, spaceLoc, Quaternion.identity);
 
+                    // player start
                     // store and remember where we should place the player
-                    if (startingSpace == Vector3.zero)
+                    if (startTile == null)
                     {
-                        startingSpace = spaceLoc;
+                        startTile = maze[x, y].GetComponent<MapTile>();
                     }
                 }
 
@@ -78,7 +79,7 @@ public class MazeMap : MonoBehaviour
 
             // init player
             // start player movement by updating state machine
-            player.transform.position = startingSpace;
+            player.transform.position = startTile.transform.position;
             player.UpdatePlayerState(Player.PlayerState.Moving);
         }
         else
@@ -96,74 +97,88 @@ public class MazeMap : MonoBehaviour
 
     }
 
-    public GameObject calculateNextMove(Vector3 startingPos)
+    public GameObject calculateNextMove(MapTile curTile, int level)
     {
         // find the associated game objects in our mapping
         // start with the starting position game object, then its easy to navigate 2d
+
+        // current starting pos / player pos
+        Vector3 curTilePos = curTile.transform.position;
+
         for (int x = 0; x < mWidth; x++)
         {
             for (int y = 0; y < mHeight; y++)
             {
-                Vector3 curTilePos = maze[x, y].transform.position;
-                if (curTilePos.x == startingPos.x && curTilePos.y == startingPos.y)
+                // found the location in the 2d array for the current
+                // tile. now we need to recursively increment level and go right, down, left top
+                if (maze[x, y].GetComponent<MapTile>() == curTile)
                 {
-                    // current starting pos / player pos
-                    maze[x, y].GetComponent<SpriteRenderer>().color = Color.yellow;
+                    curTile.level = level;
+                    bool endReached = true;
 
                     // right
                     int xRight = x + 1;
-                    MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
-                    if (x + 1 < mWidth && rightTile.type == MapTile.TileType.Space && !rightTile.alreadyVisited)
+                    if (xRight < mWidth)
                     {
-                        Debug.Log("right");
-                        return maze[xRight, y];
+                        MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
+                        if (rightTile.type == MapTile.TileType.Space && rightTile.level == 0)
+                        {
+                            endReached = false;
+                            calculateNextMove(rightTile, level + 1);
+                        }
                     }
 
                     // down
                     int yDown = y - 1;
-                    MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
-                    if (y - 1 > 0 && downTile.type == MapTile.TileType.Space && !downTile.alreadyVisited)
+                    if (yDown > 0)
                     {
-                        Debug.Log("down");
-                        return maze[x, yDown];
+                        MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
+                        if (downTile.type == MapTile.TileType.Space && downTile.level == 0)
+                        {
+                            endReached = false;
+                            calculateNextMove(downTile, level + 1);
+                        }
                     }
 
                     // left
                     int xLeft = x - 1;
-                    MapTile leftTile = maze[xLeft, y].GetComponent<MapTile>();
-                    if (x - 1 > 0 && leftTile.type == MapTile.TileType.Space && !leftTile.alreadyVisited)
+                    if (xLeft > 0)
                     {
-                        Debug.Log("left");
-                        return maze[xLeft, y];
+                        MapTile leftTile = maze[xLeft, y].GetComponent<MapTile>();
+                        if (leftTile.type == MapTile.TileType.Space && leftTile.level == 0)
+                        {
+                            endReached = false;
+                            calculateNextMove(leftTile, level + 1);
+                        }
                     }
 
                     // top
                     int yUp = y + 1;
-                    MapTile upTile = maze[x, yUp].GetComponent<MapTile>();
-                    if (y + 1 < mHeight && upTile.type == MapTile.TileType.Space && !upTile.alreadyVisited)
+                    if (yUp < mHeight)
                     {
-                        Debug.Log("up");
-                        return maze[x, yUp];
+                        MapTile upTile = maze[x, yUp].GetComponent<MapTile>();
+                        if (upTile.type == MapTile.TileType.Space && upTile.level == 0)
+                        {
+                            endReached = false;
+                            calculateNextMove(upTile, level + 1);
+                        }
+                    }
+
+                    if(endReached)
+                    {
+                        Debug.Log("End reached! Level: " + level);
+                        curTile.GetComponent<SpriteRenderer>().color = Color.red;
                     }
                 }
             }
         }
 
-        // OK, if we got here, the player eventually got stuck on
-        // a given path. It's time to reset and let them start over
-        // Reset all already visited tiles...and the colors
-        for (int x = 0; x < mWidth; x++)
-        {
-            for (int y = 0; y < mHeight; y++)
-            {
-                if (maze[x, y].GetComponent<MapTile>().alreadyVisited)
-                {
-                    maze[x, y].GetComponent<MapTile>().alreadyVisited = false;
-                    maze[x, y].GetComponent<SpriteRenderer>().color = Color.white;
-                }
-            }
-        }
-
+        // TODO: hit the end of a path, save this series of nodes
         return null;
+    }
+
+    public MapTile getPlayerStart()
+    {
+        return startTile;
     }
 }
