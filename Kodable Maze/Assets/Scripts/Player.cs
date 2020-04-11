@@ -30,8 +30,9 @@ public class Player : MonoBehaviour
         if (mState == PlayerState.Moving && Time.unscaledTime - mLastMove > MovementInterval)
         {
             mLastMove = Time.unscaledTime;
-            Vector3 nextMove = mMap.calculateNextMove(transform.position);
-            transform.position = nextMove;
+            GameObject nextTile = mMap.calculateNextMove(transform.position);
+            transform.position = nextTile.transform.position;
+            nextTile.GetComponent<MapTile>().alreadyVisited = true;
         }
     }
 
