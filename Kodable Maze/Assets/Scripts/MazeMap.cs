@@ -13,6 +13,7 @@ public class MazeMap : MonoBehaviour
     private GameObject[,] maze;
     private const string NEWLINE = "\n";
     private Vector3 startingSpace = Vector3.zero;
+    private int mWidth, mHeight;
 
     // Start is called before the first frame update
     void Start()
@@ -28,11 +29,12 @@ public class MazeMap : MonoBehaviour
             // map starts at 0,0
             // also find out the dimensions using new line sub str
             // new line for max X, and divide that from the total character count to get the number of levels, Y
-            int width = mazeStr.IndexOf(NEWLINE) + 1;
-            int height = mazeStr.Length / width;
+            int newlineWidth = mazeStr.IndexOf(NEWLINE) + 1;
+            mWidth = newlineWidth - 1; // -1 for the extra newline character
+            mHeight = mazeStr.Length / newlineWidth;
             int x = 0;
-            int y = height - 1;
-            maze = new GameObject[width - 1, height];
+            int y = mHeight - 1;
+            maze = new GameObject[mWidth, mHeight];
 
             // now that we already have dimensions, let's strip out new line
             // characters because it's impacting parsing
@@ -64,7 +66,7 @@ public class MazeMap : MonoBehaviour
 
                 x++;
 
-                if (x == width)
+                if (x == newlineWidth)
                 {
                     // lower y down one column, level
                     // reset x to the beginning again
@@ -94,8 +96,10 @@ public class MazeMap : MonoBehaviour
 
     }
 
-    public static Vector3 calculateShortestPath(Player player)
+    public Vector3 calculateShortestPath(Player player)
     {
+        
+
         Vector3 nextMove = Vector3.one;
         return nextMove;
     }

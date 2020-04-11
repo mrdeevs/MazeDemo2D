@@ -13,11 +13,13 @@ public class Player : MonoBehaviour
 
     private PlayerState mState = PlayerState.Idle;
     private float mLastMove;
+    private MazeMap mMap;
 
     // Start is called before the first frame update
     void Start()
     {
         mLastMove = Time.unscaledTime;
+        mMap = FindObjectOfType<MazeMap>();
     }
 
     // Update is called once per frame
@@ -29,7 +31,8 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Time to move! Unscaled time: " + Time.unscaledTime);
             mLastMove = Time.unscaledTime;
-            MazeMap.calculateShortestPath(this);
+            // todo move pos
+            Vector3 nextMove = mMap.calculateShortestPath(this);
         }
     }
 
