@@ -166,18 +166,12 @@ public class MazeMap : MonoBehaviour
                         }
                     }
 
-                    if(endReached)
+                    if (endReached && level > mMaxLevel)
                     {
-                        Debug.Log("End reached! Level: " + level);
-                        curTile.GetComponent<SpriteRenderer>().color = Color.red;
-                        
-                        if(level > mMaxLevel)
-                        {
-                            Debug.Log("New maximum found. Level: " + level);
-                            solvedPath = new List<MapTile>(curPath);
-                            curPath.Clear();
-                            mMaxLevel = level;
-                        }
+                        // iterate over solved path and find any
+                        // tiles that are already in the cur path. dont remove those
+                        solvedPath.AddRange(curPath);
+                        mMaxLevel = level;
                     }
                 }
             }

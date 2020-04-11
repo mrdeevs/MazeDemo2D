@@ -14,13 +14,22 @@ public class Player : MonoBehaviour
     private PlayerState mState = PlayerState.Idle;
     private float mLastMove;
     private MazeMap mMap;
+    private List<MapTile> mPaths;
 
     // Start is called before the first frame update
     void Start()
     {
         mLastMove = Time.unscaledTime;
         mMap = FindObjectOfType<MazeMap>();
-        List<MapTile> solvedPath = mMap.findPathsAndLevels(mMap.getPlayerStart(), 1);
+        mPaths = mMap.findPathsAndLevels(mMap.getPlayerStart(), 1);
+        mPaths.Sort(MapTile.SortByLevel);
+
+        List<int> removeIndicies = new List<int>();
+        foreach (MapTile tile in mPaths)
+        {
+            tile.GetComponent<SpriteRenderer>().color = Color.green;
+            int index = mPaths.IndexOf(tile);
+        }
     }
 
     // Update is called once per frame
@@ -34,11 +43,12 @@ public class Player : MonoBehaviour
 
             // make sure its valid
             // otherwise we won't move til the next frame
-            /*if (nextTile != null)
+            if (mPaths != null && mPaths.Count > 0)
             {
-                transform.position = nextTile.transform.position;
-                nextTile.GetComponent<MapTile>().alreadyVisited = true;
-            }*/
+                mPaths[0].alreadyVisited = true;
+                transform.position = mPaths[0].transform.position;
+                mPaths.RemoveAt(0);
+            }
         }
     }
 

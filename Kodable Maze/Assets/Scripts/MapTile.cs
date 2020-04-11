@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class MapTile : MonoBehaviour
 {
+    public static int SortByLevel (MapTile t1, MapTile t2)
+    {
+        return t1.level.CompareTo(t2.level);
+    }
+
     public bool alreadyVisited = false;
     public TileType type;
     public int level;
