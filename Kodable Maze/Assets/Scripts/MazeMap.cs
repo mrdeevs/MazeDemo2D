@@ -98,14 +98,6 @@ public class MazeMap : MonoBehaviour
 
     public GameObject calculateNextMove(Vector3 startingPos)
     {
-        /*Vector3 nextMove = Vector3.one;
-
-        // calculate all possible next moves
-        Vector3 left = new Vector3(startingPos.x - 1, startingPos.y, startingPos.z);
-        Vector3 right = new Vector3(startingPos.x + 1, startingPos.y, startingPos.z);
-        Vector3 top = new Vector3(startingPos.x, startingPos.y + 1, startingPos.z);
-        Vector3 bottom = new Vector3(startingPos.x - 1, startingPos.y - 1, startingPos.z);*/
-
         // find the associated game objects in our mapping
         // start with the starting position game object, then its easy to navigate 2d
         for (int x = 0; x < mWidth; x++)
@@ -119,35 +111,39 @@ public class MazeMap : MonoBehaviour
                     maze[x, y].GetComponent<SpriteRenderer>().color = Color.magenta;
 
                     // right
-                    MapTile rightTile = maze[x + 1, y].GetComponent<MapTile>();
+                    int xRight = x + 1;
+                    MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
                     if (x + 1 < mWidth && rightTile.type == MapTile.TileType.Space && !rightTile.alreadyVisited)
                     {
                         Debug.Log("right");
-                        return maze[x + 1, y];
+                        return maze[xRight, y];
                     }
 
                     // down
-                    MapTile downTile = maze[x, y - 1].GetComponent<MapTile>();
+                    int yDown = y - 1;
+                    MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
                     if (y - 1 > 0 && downTile.type == MapTile.TileType.Space && !downTile.alreadyVisited)
                     {
                         Debug.Log("down");
-                        return maze[x, y - 1];
+                        return maze[x, yDown];
                     }
 
                     // left
-                    MapTile leftTile = maze[x - 1, y].GetComponent<MapTile>();
+                    int xLeft = x - 1;
+                    MapTile leftTile = maze[xLeft, y].GetComponent<MapTile>();
                     if (x - 1 > 0 && leftTile.type == MapTile.TileType.Space && !leftTile.alreadyVisited)
                     {
                         Debug.Log("left");
-                        return maze[x - 1, y];
+                        return maze[xLeft, y];
                     }
 
                     // top
-                    MapTile upTile = maze[x, y + 1].GetComponent<MapTile>();
+                    int yUp = y + 1;
+                    MapTile upTile = maze[x, yUp].GetComponent<MapTile>();
                     if (y + 1 < mHeight && upTile.type == MapTile.TileType.Space && !upTile.alreadyVisited)
                     {
                         Debug.Log("up");
-                        return maze[x, y + 1];
+                        return maze[x, yUp];
                     }
                 }
             }
