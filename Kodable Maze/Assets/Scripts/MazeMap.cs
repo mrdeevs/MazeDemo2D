@@ -10,10 +10,11 @@ public class MazeMap : MonoBehaviour
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
+    private List<MapTile> curPath = new List<MapTile>(), solvedPath = new List<MapTile>();
     private GameObject[,] maze;
     private MapTile startTile = null, endTile = null;
     private const string NEWLINE = "\n";
-    private int mWidth, mHeight;
+    private int mWidth, mHeight, mMaxLevel;
 
     // Start is called before the first frame update
     void Start()
@@ -97,7 +98,7 @@ public class MazeMap : MonoBehaviour
 
     }
 
-    public GameObject calculateNextMove(MapTile curTile, int level)
+    public List<MapTile> findPathsAndLevels(MapTile curTile, int level)
     {
         // find the associated game objects in our mapping
         // start with the starting position game object, then its easy to navigate 2d
@@ -115,6 +116,7 @@ public class MazeMap : MonoBehaviour
                 {
                     curTile.level = level;
                     bool endReached = true;
+                    curPath.Add(curTile);
 
                     // right
                     int xRight = x + 1;
@@ -124,7 +126,7 @@ public class MazeMap : MonoBehaviour
                         if (rightTile.type == MapTile.TileType.Space && rightTile.level == 0)
                         {
                             endReached = false;
-                            calculateNextMove(rightTile, level + 1);
+                            findPathsAndLevels(rightTile, level + 1);
                         }
                     }
 
@@ -136,7 +138,7 @@ public class MazeMap : MonoBehaviour
                         if (downTile.type == MapTile.TileType.Space && downTile.level == 0)
                         {
                             endReached = false;
-                            calculateNextMove(downTile, level + 1);
+                            findPathsAndLevels(downTile, level + 1);
                         }
                     }
 
@@ -148,7 +150,7 @@ public class MazeMap : MonoBehaviour
                         if (leftTile.type == MapTile.TileType.Space && leftTile.level == 0)
                         {
                             endReached = false;
-                            calculateNextMove(leftTile, level + 1);
+                            findPathsAndLevels(leftTile, level + 1);
                         }
                     }
 
@@ -160,7 +162,7 @@ public class MazeMap : MonoBehaviour
                         if (upTile.type == MapTile.TileType.Space && upTile.level == 0)
                         {
                             endReached = false;
-                            calculateNextMove(upTile, level + 1);
+                            findPathsAndLevels(upTile, level + 1);
                         }
                     }
 
@@ -168,13 +170,21 @@ public class MazeMap : MonoBehaviour
                     {
                         Debug.Log("End reached! Level: " + level);
                         curTile.GetComponent<SpriteRenderer>().color = Color.red;
+                        
+                        if(level > mMaxLevel)
+                        {
+                            Debug.Log("New maximum found. Level: " + level);
+                            solvedPath = new List<MapTile>(curPath);
+                            curPath.Clear();
+                            mMaxLevel = level;
+                        }
                     }
                 }
             }
         }
 
-        // TODO: hit the end of a path, save this series of nodes
-        return null;
+        // return the solved path, longest
+        return solvedPath;
     }
 
     public MapTile getPlayerStart()

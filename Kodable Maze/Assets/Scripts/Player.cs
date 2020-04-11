@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     {
         mLastMove = Time.unscaledTime;
         mMap = FindObjectOfType<MazeMap>();
+        List<MapTile> solvedPath = mMap.findPathsAndLevels(mMap.getPlayerStart(), 1);
     }
 
     // Update is called once per frame
@@ -30,15 +31,14 @@ public class Player : MonoBehaviour
         if (mState == PlayerState.Moving && Time.unscaledTime - mLastMove > MovementInterval)
         {
             mLastMove = Time.unscaledTime;
-            GameObject nextTile = mMap.calculateNextMove(mMap.getPlayerStart(), 1);
 
             // make sure its valid
             // otherwise we won't move til the next frame
-            if (nextTile != null)
+            /*if (nextTile != null)
             {
                 transform.position = nextTile.transform.position;
                 nextTile.GetComponent<MapTile>().alreadyVisited = true;
-            }
+            }*/
         }
     }
 
