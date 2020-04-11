@@ -29,10 +29,9 @@ public class Player : MonoBehaviour
         // every MovementInterval seconds
         if (mState == PlayerState.Moving && Time.unscaledTime - mLastMove > MovementInterval)
         {
-            Debug.Log("Time to move! Unscaled time: " + Time.unscaledTime);
             mLastMove = Time.unscaledTime;
-            // todo move pos
-            Vector3 nextMove = mMap.calculateShortestPath(this);
+            Vector3 nextMove = mMap.calculateNextMove(transform.position);
+            transform.position = nextMove;
         }
     }
 
