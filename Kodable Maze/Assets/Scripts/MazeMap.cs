@@ -108,16 +108,7 @@ public class MazeMap : MonoBehaviour
                 if (curTilePos.x == startingPos.x && curTilePos.y == startingPos.y)
                 {
                     // current starting pos / player pos
-                    maze[x, y].GetComponent<SpriteRenderer>().color = Color.magenta;
-
-                    // right
-                    int xRight = x + 1;
-                    MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
-                    if (x + 1 < mWidth && rightTile.type == MapTile.TileType.Space && !rightTile.alreadyVisited)
-                    {
-                        Debug.Log("right");
-                        return maze[xRight, y];
-                    }
+                    maze[x, y].GetComponent<SpriteRenderer>().color = Color.yellow;
 
                     // down
                     int yDown = y - 1;
@@ -126,6 +117,15 @@ public class MazeMap : MonoBehaviour
                     {
                         Debug.Log("down");
                         return maze[x, yDown];
+                    }
+
+                    // right
+                    int xRight = x + 1;
+                    MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
+                    if (x + 1 < mWidth && rightTile.type == MapTile.TileType.Space && !rightTile.alreadyVisited)
+                    {
+                        Debug.Log("right");
+                        return maze[xRight, y];
                     }
 
                     // left
@@ -145,6 +145,21 @@ public class MazeMap : MonoBehaviour
                         Debug.Log("up");
                         return maze[x, yUp];
                     }
+                }
+            }
+        }
+
+        // OK, if we got here, the player eventually got stuck on
+        // a given path. It's time to reset and let them start over
+        // Reset all already visited tiles...and the colors
+        for (int x = 0; x < mWidth; x++)
+        {
+            for (int y = 0; y < mHeight; y++)
+            {
+                if (maze[x, y].GetComponent<MapTile>().alreadyVisited)
+                {
+                    maze[x, y].GetComponent<MapTile>().alreadyVisited = false;
+                    maze[x, y].GetComponent<SpriteRenderer>().color = Color.white;
                 }
             }
         }

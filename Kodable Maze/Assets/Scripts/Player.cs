@@ -31,8 +31,14 @@ public class Player : MonoBehaviour
         {
             mLastMove = Time.unscaledTime;
             GameObject nextTile = mMap.calculateNextMove(transform.position);
-            transform.position = nextTile.transform.position;
-            nextTile.GetComponent<MapTile>().alreadyVisited = true;
+
+            // make sure its valid
+            // otherwise we won't move til the next frame
+            if (nextTile != null)
+            {
+                transform.position = nextTile.transform.position;
+                nextTile.GetComponent<MapTile>().alreadyVisited = true;
+            }
         }
     }
 
