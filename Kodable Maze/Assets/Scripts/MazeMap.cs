@@ -110,15 +110,6 @@ public class MazeMap : MonoBehaviour
                     // current starting pos / player pos
                     maze[x, y].GetComponent<SpriteRenderer>().color = Color.yellow;
 
-                    // down
-                    int yDown = y - 1;
-                    MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
-                    if (y - 1 > 0 && downTile.type == MapTile.TileType.Space && !downTile.alreadyVisited)
-                    {
-                        Debug.Log("down");
-                        return maze[x, yDown];
-                    }
-
                     // right
                     int xRight = x + 1;
                     MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
@@ -126,6 +117,15 @@ public class MazeMap : MonoBehaviour
                     {
                         Debug.Log("right");
                         return maze[xRight, y];
+                    }
+
+                    // down
+                    int yDown = y - 1;
+                    MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
+                    if (y - 1 > 0 && downTile.type == MapTile.TileType.Space && !downTile.alreadyVisited)
+                    {
+                        Debug.Log("down");
+                        return maze[x, yDown];
                     }
 
                     // left
