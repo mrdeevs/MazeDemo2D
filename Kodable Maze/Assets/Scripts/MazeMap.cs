@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapGenerator : MonoBehaviour
+public class MazeMap : MonoBehaviour
 {
     public TextAsset mazeFile = null;
     public GameObject wallPrefab, spacePrefab;
@@ -17,6 +17,9 @@ public class MapGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // INIT
+        // Generates a 2D Map given the input Maze.txt data
+        // [----]
         if (mazeFile != null && mazeFile.bytes.Length > 0)
         {
             // convert the map data text file into a string
@@ -72,10 +75,9 @@ public class MapGenerator : MonoBehaviour
             }
 
             // init player
+            // start player movement by updating state machine
             player.transform.position = startingSpace;
-
-            // todo test
-            maze[width - 2, 0].gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+            player.UpdatePlayerState(Player.PlayerState.Moving);
         }
         else
         {
@@ -90,5 +92,11 @@ public class MapGenerator : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public static Vector3 calculateShortestPath(Player player)
+    {
+        Vector3 nextMove = Vector3.one;
+        return nextMove;
     }
 }

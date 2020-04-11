@@ -19,7 +19,7 @@ public class MazeCamera : MonoBehaviour
         // the player while its not there yet
         transform.position = new Vector3(
             transform.position.x, 
-            Mathf.Lerp(transform.position.y, player.transform.position.y, 1.5f * Time.deltaTime), 
+            Mathf.Lerp(transform.position.y, player.transform.position.y, 3f * Time.deltaTime), 
             transform.position.z);
     }
 }
