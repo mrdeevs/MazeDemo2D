@@ -12,7 +12,7 @@ public class MazeMap : MonoBehaviour
     private List<char> spaces = new List<char>() { ' ' };
     private List<MapTile> curPath = new List<MapTile>(), potentialPaths = new List<MapTile>();
     private GameObject[,] maze;
-    private MapTile startTile = null, destinationTile = null;
+    private MapTile startTile = null, endTile = null;
     private const string NEWLINE = "\n";
     private int mWidth, mHeight, mMaxLevel;
 
@@ -63,6 +63,7 @@ public class MazeMap : MonoBehaviour
                     if (startTile == null)
                     {
                         startTile = maze[x, y].GetComponent<MapTile>();
+                        startTile.GetComponent<SpriteRenderer>().color = Color.blue;
                     }
                 }
 
@@ -116,7 +117,6 @@ public class MazeMap : MonoBehaviour
             MapTile leftTile = maze[xLeft, y].GetComponent<MapTile>();
             if (leftTile.level < destinationTile.level && allSolutions.Contains(leftTile) && leftTile.type == MapTile.TileType.Space)
             {
-                leftTile.GetComponent<SpriteRenderer>().color = Color.magenta;
                 adjSpaces.Add(leftTile);
             }
         }
@@ -128,7 +128,6 @@ public class MazeMap : MonoBehaviour
             MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
             if (rightTile.level < destinationTile.level && allSolutions.Contains(rightTile) && rightTile.type == MapTile.TileType.Space)
             {
-                rightTile.GetComponent<SpriteRenderer>().color = Color.magenta;
                 adjSpaces.Add(rightTile);
             }
         }
@@ -140,7 +139,6 @@ public class MazeMap : MonoBehaviour
             MapTile upTile = maze[x, yUp].GetComponent<MapTile>();
             if (upTile.level < destinationTile.level && allSolutions.Contains(upTile) && upTile.type == MapTile.TileType.Space)
             {
-                upTile.GetComponent<SpriteRenderer>().color = Color.magenta;
                 adjSpaces.Add(upTile);
             }
         }
@@ -152,7 +150,6 @@ public class MazeMap : MonoBehaviour
             MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
             if (downTile.level < destinationTile.level && allSolutions.Contains(downTile) && downTile.type == MapTile.TileType.Space)
             {
-                downTile.GetComponent<SpriteRenderer>().color = Color.magenta;
                 adjSpaces.Add(downTile);
             }
         }
@@ -175,6 +172,7 @@ public class MazeMap : MonoBehaviour
         if (bestTile == startTile || bestTile == null)
         {
             Debug.Log("Found the starting tile, we're done!");
+            endTile.GetComponent<SpriteRenderer>().color = Color.green;
         }
         else
         {
@@ -184,9 +182,7 @@ public class MazeMap : MonoBehaviour
 
     public List<MapTile> findAllPathsAndLevels(MapTile curTile, int level)
     {
-        // find the associated game objects in our mapping
-        // start with the starting position game object, then its easy to navigate 2d
-
+        // starting tile for search
         // current starting pos / player pos
         Vector3 curTilePos = curTile.transform.position;
 
@@ -266,16 +262,16 @@ public class MazeMap : MonoBehaviour
         // sort the existing paths to dead ends using level comparator
         potentialPaths.Sort(MapTile.SortByLevel);
 
-        // test colors
-        foreach (MapTile tile in potentialPaths)
+        // TEST colors for all possible solutions
+        /*foreach (MapTile tile in potentialPaths)
         {
             tile.GetComponent<SpriteRenderer>().color = Color.green;
-        }
+        }*/
 
         // reverse from the destination by level
         // color the destination block
         // store the destination / end tile here
-        destinationTile = potentialPaths[potentialPaths.Count - 1];
+        endTile = potentialPaths[potentialPaths.Count - 1];
 
         // return the solved path, largest level
         return potentialPaths;
@@ -283,7 +279,7 @@ public class MazeMap : MonoBehaviour
 
     public MapTile getPlayerDestination()
     {
-        return destinationTile;
+        return endTile;
     }
 
     public MapTile getPlayerStart()
