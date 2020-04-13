@@ -215,7 +215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21da6808837b5d840b746aeb0df5d595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alreadyVisited: 0
   type: 0
   level: 0
 --- !u!1 &519420028
@@ -653,7 +652,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21da6808837b5d840b746aeb0df5d595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alreadyVisited: 0
   type: 1
   level: 0
 --- !u!1 &1939480428
@@ -750,4 +748,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5f6f4394ecb4e4aa5277670c059b0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementInterval: 0.25
+  MovementInterval: 0.1
