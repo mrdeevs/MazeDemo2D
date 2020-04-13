@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private PlayerState mState = PlayerState.Idle;
     private float mLastMove;
     private MazeMap mMap;
-    private List<MapTile> mPaths;
+    private List<MapTile> mMoves;
 
     // Start is called before the first frame update
     void Start()
@@ -28,16 +28,14 @@ public class Player : MonoBehaviour
 
         // find the best path using existing solutions
         // create a list of paths here to be filled in by traverse()
-        List<MapTile> correctPath = new List<MapTile>();
-        mMap.traverseDestToStartAndParseByLevel(mMap.getPlayerDestination(), correctPath, allPossiblePaths);
+        List<MapTile> correctPaths = new List<MapTile>();
+        mMap.traverseDestToStartAndParseByLevel(mMap.getPlayerDestination(), correctPaths, allPossiblePaths);
 
-        // now that we have all possible dead ends in the map
-        // using a breadth first level search, we need to start
-        // at the lowest level and traverse back to the player
-        foreach(MapTile finalPathTile in correctPath)
-        {
-
-        }
+        // assign the correct path to moves so the player
+        // can get around. ALSO we need to reverse it, since we started the
+        // search at the destination position at the end
+        mMoves = correctPaths;
+        mMoves.Reverse();
     }
 
     // Update is called once per frame
@@ -51,10 +49,10 @@ public class Player : MonoBehaviour
 
             // make sure its valid
             // otherwise we won't move til the next frame
-            if (mPaths != null && mPaths.Count > 0)
+            if (mMoves != null && mMoves.Count > 0)
             {
-                transform.position = mPaths[0].transform.position;
-                mPaths.RemoveAt(0);
+                transform.position = mMoves[0].transform.position;
+                mMoves.RemoveAt(0);
             }
         }
     }

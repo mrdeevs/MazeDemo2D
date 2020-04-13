@@ -100,7 +100,6 @@ public class MazeMap : MonoBehaviour
 
     public void traverseDestToStartAndParseByLevel(MapTile destinationTile, List<MapTile> bestPath, List<MapTile> allSolutions)
     {
-        Debug.Log("traverseDestToStartAndParseByLevel");
         // add the next block
         // create a list for the 4 possible next moves
         // x, y maps directly from world space to our 2D array
@@ -173,13 +172,12 @@ public class MazeMap : MonoBehaviour
 
         // todo - call the next recursive function
         // with the best adjacent tile
-        if (bestTile == startTile)
+        if (bestTile == startTile || bestTile == null)
         {
             Debug.Log("Found the starting tile, we're done!");
         }
         else
         {
-            bestTile.GetComponent<SpriteRenderer>().color = Color.red;
             traverseDestToStartAndParseByLevel(bestTile, bestPath, allSolutions);
         }
     }
