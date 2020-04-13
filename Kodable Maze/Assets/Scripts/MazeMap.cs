@@ -27,56 +27,92 @@ public class MazeMap : MonoBehaviour
             // convert the map data text file into a string
             string mazeStr = mazeFile.text;
 
-            // map starts at 0,0
-            // also find out the dimensions using new line sub str
-            // new line for max X, and divide that from the total character count to get the number of levels, Y
-            int newlineWidth = mazeStr.IndexOf(NEWLINE) + 1;
-            mWidth = newlineWidth - 1; // -1 for the extra newline character
-            mHeight = mazeStr.Length / newlineWidth;
-            int x = 0;
-            int y = mHeight - 1;
-            maze = new GameObject[mWidth, mHeight];
+            List<string> mazeByLines = new List<string>();
 
-            // now that we already have dimensions, let's strip out new line
-            // characters because it's impacting parsing
-            mazeStr = mazeStr.Replace("\n\n", NEWLINE);
-
-            // iterate over each tile and build the map
-            for (int i = 0; i < mazeStr.Length; i++)
+            foreach (string line in mazeStr.Split("\n"[0]))
             {
-                if (walls.Contains(mazeStr[i]))
-                {
-                    // wall char found
-                    // create a new wall
-                    maze[x, y] = Instantiate(wallPrefab, new Vector3(x, y, 0f), Quaternion.identity);
-                }
-                else if (spaces.Contains(mazeStr[i]))
-                {
-                    // space found, open
-                    // create a new space
-                    Vector3 spaceLoc = new Vector3(x, y, 0f);
+                bool nothingFound = true;
 
-                    maze[x, y] = Instantiate(spacePrefab, spaceLoc, Quaternion.identity);
-
-                    // player start
-                    // store and remember where we should place the player
-                    if (startTile == null)
+                // check for spaces
+                foreach (char spaceChar in spaces)
+                {
+                    foreach (char lineChar in line)
                     {
-                        startTile = maze[x, y].GetComponent<MapTile>();
-                        startTile.GetComponent<SpriteRenderer>().color = Color.blue;
+                        if (spaceChar == lineChar)
+                        {
+                            nothingFound = false;
+                            break;
+                        }
                     }
                 }
 
-                x++;
-
-                if (x == newlineWidth)
+                // check for walls
+                foreach (char wall in walls)
                 {
-                    // lower y down one column, level
-                    // reset x to the beginning again
-                    // remember, converting a 1D str to a 2D array, but 0,0 starts at the bottom left in the editor
-                    y--;
-                    x = 0;
+                    foreach (char lineChar in line)
+                    {
+                        if (wall == lineChar)
+                        {
+                            nothingFound = false;
+                            break;
+                        }
+                    }
                 }
+
+                // only add valid lines
+                if (!nothingFound)
+                {
+                    mazeByLines.Add(line);
+                    //Debug.Log("Adding line: " + line + " length: " + line.Length);
+                }
+            }
+
+            // map starts at 0,0
+            // also find out the dimensions using new line sub str
+            // new line for max X, and divide that from the total character count to get the number of levels, Y
+            //int newlineWidth = mazeStr.IndexOf(NEWLINE) + 1;
+            mWidth = mazeByLines[0].Length;
+            mHeight = mazeByLines.Count;
+            maze = new GameObject[mWidth, mHeight];
+
+            int lineRow = 0;
+            int lineIndex = 0;
+
+            for (int y = mHeight - 1; y >= 0; y--)
+            {
+                // iterate over each tile and build the map
+                for (int x = 0; x < mWidth; x++)
+                {
+                    // wall check
+                    if (walls.Contains(mazeByLines[lineRow][lineIndex]))
+                    {
+                        // wall char found
+                        // create a new wall
+                        maze[x, y] = Instantiate(wallPrefab, new Vector3(x, y, 0f), Quaternion.identity);
+                    }
+                    // space check
+                    else if (spaces.Contains(mazeByLines[lineRow][lineIndex]))
+                    {
+                        // space found, open
+                        // create a new space
+                        Vector3 spaceLoc = new Vector3(x, y, 0f);
+
+                        maze[x, y] = Instantiate(spacePrefab, spaceLoc, Quaternion.identity);
+
+                        // player start
+                        // store and remember where we should place the player
+                        if (startTile == null)
+                        {
+                            startTile = maze[x, y].GetComponent<MapTile>();
+                            startTile.GetComponent<SpriteRenderer>().color = Color.blue;
+                        }
+                    }
+
+                    lineIndex++;
+                }
+
+                lineIndex = 0;
+                lineRow++;
             }
 
             // init player
