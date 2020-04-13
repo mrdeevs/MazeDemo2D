@@ -9,7 +9,6 @@ public class MapTile : MonoBehaviour
         return t1.level.CompareTo(t2.level);
     }
 
-    public bool alreadyVisited = false;
     public TileType type;
     public int level;
 

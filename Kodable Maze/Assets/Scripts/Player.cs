@@ -20,15 +20,23 @@ public class Player : MonoBehaviour
     void Start()
     {
         mLastMove = Time.unscaledTime;
-        mMap = FindObjectOfType<MazeMap>();
-        mPaths = mMap.findPathsAndLevels(mMap.getPlayerStart(), 1);
-        mPaths.Sort(MapTile.SortByLevel);
 
-        List<int> removeIndicies = new List<int>();
-        foreach (MapTile tile in mPaths)
+        mMap = FindObjectOfType<MazeMap>();
+
+        // this generates the player start and end pos. too
+        List<MapTile> allPossiblePaths = mMap.findAllPathsAndLevels(mMap.getPlayerStart(), 1);
+
+        // find the best path using existing solutions
+        // create a list of paths here to be filled in by traverse()
+        List<MapTile> correctPath = new List<MapTile>();
+        mMap.traverseDestToStartAndParseByLevel(mMap.getPlayerDestination(), correctPath, allPossiblePaths);
+
+        // now that we have all possible dead ends in the map
+        // using a breadth first level search, we need to start
+        // at the lowest level and traverse back to the player
+        foreach(MapTile finalPathTile in correctPath)
         {
-            tile.GetComponent<SpriteRenderer>().color = Color.green;
-            int index = mPaths.IndexOf(tile);
+
         }
     }
 
@@ -45,7 +53,6 @@ public class Player : MonoBehaviour
             // otherwise we won't move til the next frame
             if (mPaths != null && mPaths.Count > 0)
             {
-                mPaths[0].alreadyVisited = true;
                 transform.position = mPaths[0].transform.position;
                 mPaths.RemoveAt(0);
             }

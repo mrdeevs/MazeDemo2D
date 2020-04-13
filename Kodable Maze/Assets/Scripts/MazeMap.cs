@@ -10,9 +10,9 @@ public class MazeMap : MonoBehaviour
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
     private List<char> spaces = new List<char>() { ' ' };
-    private List<MapTile> curPath = new List<MapTile>(), solvedPath = new List<MapTile>();
+    private List<MapTile> curPath = new List<MapTile>(), potentialPaths = new List<MapTile>();
     private GameObject[,] maze;
-    private MapTile startTile = null, endTile = null;
+    private MapTile startTile = null, destinationTile = null;
     private const string NEWLINE = "\n";
     private int mWidth, mHeight, mMaxLevel;
 
@@ -98,7 +98,93 @@ public class MazeMap : MonoBehaviour
 
     }
 
-    public List<MapTile> findPathsAndLevels(MapTile curTile, int level)
+    public void traverseDestToStartAndParseByLevel(MapTile destinationTile, List<MapTile> bestPath, List<MapTile> allSolutions)
+    {
+        Debug.Log("traverseDestToStartAndParseByLevel");
+        // add the next block
+        // create a list for the 4 possible next moves
+        // x, y maps directly from world space to our 2D array
+        bestPath.Add(destinationTile);
+        destinationTile.GetComponent<SpriteRenderer>().color = Color.yellow;
+        List<MapTile> adjSpaces = new List<MapTile>(4);
+        int x = (int)destinationTile.transform.position.x;
+        int y = (int)destinationTile.transform.position.y;
+
+        // left
+        int xLeft = x - 1;
+        if (xLeft > 0)
+        {
+            MapTile leftTile = maze[xLeft, y].GetComponent<MapTile>();
+            if (leftTile.level < destinationTile.level && allSolutions.Contains(leftTile) && leftTile.type == MapTile.TileType.Space)
+            {
+                leftTile.GetComponent<SpriteRenderer>().color = Color.magenta;
+                adjSpaces.Add(leftTile);
+            }
+        }
+
+        // right
+        int xRight = x + 1;
+        if (xRight < mWidth)
+        {
+            MapTile rightTile = maze[xRight, y].GetComponent<MapTile>();
+            if (rightTile.level < destinationTile.level && allSolutions.Contains(rightTile) && rightTile.type == MapTile.TileType.Space)
+            {
+                rightTile.GetComponent<SpriteRenderer>().color = Color.magenta;
+                adjSpaces.Add(rightTile);
+            }
+        }
+
+        // top
+        int yUp = y + 1;
+        if (yUp < mHeight)
+        {
+            MapTile upTile = maze[x, yUp].GetComponent<MapTile>();
+            if (upTile.level < destinationTile.level && allSolutions.Contains(upTile) && upTile.type == MapTile.TileType.Space)
+            {
+                upTile.GetComponent<SpriteRenderer>().color = Color.magenta;
+                adjSpaces.Add(upTile);
+            }
+        }
+
+        // down
+        int yDown = y - 1;
+        if (yDown > 0)
+        {
+            MapTile downTile = maze[x, yDown].GetComponent<MapTile>();
+            if (downTile.level < destinationTile.level && allSolutions.Contains(downTile) && downTile.type == MapTile.TileType.Space)
+            {
+                downTile.GetComponent<SpriteRenderer>().color = Color.magenta;
+                adjSpaces.Add(downTile);
+            }
+        }
+
+        // now sort the adjacent valid spaces by ascending order
+        // and then only keep the first element (the smallest level adj. space)
+        float lowestLevelFound = Mathf.Infinity;
+        MapTile bestTile = null;
+        foreach (MapTile adjTile in adjSpaces)
+        {
+            if (adjTile.level < lowestLevelFound)
+            {
+                bestTile = adjTile;
+                lowestLevelFound = adjTile.level;
+            }
+        }
+
+        // todo - call the next recursive function
+        // with the best adjacent tile
+        if (bestTile == startTile)
+        {
+            Debug.Log("Found the starting tile, we're done!");
+        }
+        else
+        {
+            bestTile.GetComponent<SpriteRenderer>().color = Color.red;
+            traverseDestToStartAndParseByLevel(bestTile, bestPath, allSolutions);
+        }
+    }
+
+    public List<MapTile> findAllPathsAndLevels(MapTile curTile, int level)
     {
         // find the associated game objects in our mapping
         // start with the starting position game object, then its easy to navigate 2d
@@ -126,7 +212,7 @@ public class MazeMap : MonoBehaviour
                         if (rightTile.type == MapTile.TileType.Space && rightTile.level == 0)
                         {
                             endReached = false;
-                            findPathsAndLevels(rightTile, level + 1);
+                            findAllPathsAndLevels(rightTile, level + 1);
                         }
                     }
 
@@ -138,7 +224,7 @@ public class MazeMap : MonoBehaviour
                         if (downTile.type == MapTile.TileType.Space && downTile.level == 0)
                         {
                             endReached = false;
-                            findPathsAndLevels(downTile, level + 1);
+                            findAllPathsAndLevels(downTile, level + 1);
                         }
                     }
 
@@ -150,7 +236,7 @@ public class MazeMap : MonoBehaviour
                         if (leftTile.type == MapTile.TileType.Space && leftTile.level == 0)
                         {
                             endReached = false;
-                            findPathsAndLevels(leftTile, level + 1);
+                            findAllPathsAndLevels(leftTile, level + 1);
                         }
                     }
 
@@ -162,23 +248,44 @@ public class MazeMap : MonoBehaviour
                         if (upTile.type == MapTile.TileType.Space && upTile.level == 0)
                         {
                             endReached = false;
-                            findPathsAndLevels(upTile, level + 1);
+                            findAllPathsAndLevels(upTile, level + 1);
                         }
                     }
 
+                    // found a dead end / possible exit
                     if (endReached && level > mMaxLevel)
                     {
                         // iterate over solved path and find any
                         // tiles that are already in the cur path. dont remove those
-                        solvedPath.AddRange(curPath);
+                        potentialPaths.AddRange(curPath);
                         mMaxLevel = level;
                     }
                 }
             }
         }
 
-        // return the solved path, longest
-        return solvedPath;
+        // clear the temporary storage for paths / cur
+        // sort the existing paths to dead ends using level comparator
+        potentialPaths.Sort(MapTile.SortByLevel);
+
+        // test colors
+        foreach (MapTile tile in potentialPaths)
+        {
+            tile.GetComponent<SpriteRenderer>().color = Color.green;
+        }
+
+        // reverse from the destination by level
+        // color the destination block
+        // store the destination / end tile here
+        destinationTile = potentialPaths[potentialPaths.Count - 1];
+
+        // return the solved path, largest level
+        return potentialPaths;
+    }
+
+    public MapTile getPlayerDestination()
+    {
+        return destinationTile;
     }
 
     public MapTile getPlayerStart()
