@@ -26,16 +26,22 @@ public class Player : MonoBehaviour
         // this generates the player start and end pos. too
         List<MapTile> allPossiblePaths = mMap.findAllPathsAndLevels(mMap.getPlayerStart(), 1);
 
-        // find the best path using existing solutions
-        // create a list of paths here to be filled in by traverse()
-        List<MapTile> correctPaths = new List<MapTile>();
-        mMap.traverseDestToStartAndParseByLevel(mMap.getPlayerDestination(), correctPaths, allPossiblePaths);
+        if (allPossiblePaths != null && allPossiblePaths.Count > 0)
+        {
+            // find the best path using existing solutions
+            // create a list of paths here to be filled in by traverse()
+            List<MapTile> correctPaths = new List<MapTile>();
+            mMap.traverseDestToStartAndParseByLevel(mMap.getPlayerDestination(), correctPaths, allPossiblePaths);
 
-        // assign the correct path to moves so the player
-        // can get around. ALSO we need to reverse it, since we started the
-        // search at the destination position at the end
-        mMoves = correctPaths;
-        mMoves.Reverse();
+            // assign the correct path to moves so the player
+            // can get around. ALSO we need to reverse it, since we started the
+            // search at the destination position at the end
+            mMoves = correctPaths;
+            mMoves.Reverse();
+        } else
+        {
+            Debug.Log("Show the invalid UI!");
+        }
     }
 
     // Update is called once per frame

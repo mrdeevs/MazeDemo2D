@@ -13,8 +13,10 @@ public class MazeMap : MonoBehaviour
     private List<MapTile> curPath = new List<MapTile>(), potentialPaths = new List<MapTile>();
     private GameObject[,] maze;
     private MapTile startTile = null, endTile = null;
-    private const string NEWLINE = "\n";
     private int mWidth, mHeight, mMaxLevel;
+
+    private const string Newline = "\n";
+    private const int MinimumValidHeight = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -70,7 +72,7 @@ public class MazeMap : MonoBehaviour
             // TODO - the minimum size of a grid maze must be
             // at least 2 walls and 1 empty row of spaces to walk in
             // otherwise its invalid
-            if(mazeByLines.Count < 3)
+            if (mazeByLines.Count < MinimumValidHeight)
             {
                 Debug.Log("Maze format or size is invalid");
                 Application.Quit();
@@ -305,7 +307,7 @@ public class MazeMap : MonoBehaviour
                         //curTile.GetComponent<SpriteRenderer>().color = Color.red;
 
                         // SPECIAL EDGE CASE: only 1 empty row and 2 walls, set dest. level
-                        if(mHeight == 3 && endTile.level == 0)
+                        if (mHeight == MinimumValidHeight && endTile.level == 0)
                         {
                             endTile.level = mWidth;
                         }
@@ -323,8 +325,15 @@ public class MazeMap : MonoBehaviour
             tile.GetComponent<SpriteRenderer>().color = Color.red;
         }*/
 
-        // return the solved path, largest level
-        return potentialPaths;
+        if (potentialPaths.Contains(endTile))
+        {
+            // return the solved path, largest level
+            return potentialPaths;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public MapTile getPlayerDestination()
