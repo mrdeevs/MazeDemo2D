@@ -72,7 +72,6 @@ public class MazeMap : MonoBehaviour
             // otherwise its invalid
             if (mazeByLines.Count < MinimumValidHeight)
             {
-                Debug.Log("Maze format or size is invalid");
                 ShowError(true);
                 Application.Quit();
                 return;
@@ -137,7 +136,6 @@ public class MazeMap : MonoBehaviour
         }
         else
         {
-            Debug.Log("Invalid File input for maze data!");
             ShowError(true);
             Application.Quit();
         }
