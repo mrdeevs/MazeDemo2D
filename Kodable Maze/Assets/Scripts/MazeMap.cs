@@ -73,7 +73,7 @@ public class MazeMap : MonoBehaviour
             if(mazeByLines.Count < 3)
             {
                 Debug.Log("Maze format or size is invalid");
-                return;
+                Application.Quit();
             }
 
             // map starts at 0,0
@@ -303,6 +303,12 @@ public class MazeMap : MonoBehaviour
                         potentialPaths.AddRange(curPath);
                         mMaxLevel = level;
                         //curTile.GetComponent<SpriteRenderer>().color = Color.red;
+
+                        // SPECIAL EDGE CASE: only 1 empty row and 2 walls, set dest. level
+                        if(mHeight == 3 && endTile.level == 0)
+                        {
+                            endTile.level = mWidth;
+                        }
                     }
                 }
             }
@@ -311,11 +317,10 @@ public class MazeMap : MonoBehaviour
         // clear the temporary storage for paths / cur
         // sort the existing paths to dead ends using level comparator
         potentialPaths.Sort(MapTile.SortByLevel);
-
         // TEST colors for all possible solutions
         /*foreach (MapTile tile in potentialPaths)
         {
-            tile.GetComponent<SpriteRenderer>().color = Color.green;
+            tile.GetComponent<SpriteRenderer>().color = Color.red;
         }*/
 
         // return the solved path, largest level
