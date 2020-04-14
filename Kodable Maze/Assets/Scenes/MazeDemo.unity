@@ -517,7 +517,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Invalid Maze data! \nPlease check maze.txt in /Assets/Data/maze.txt"
+  m_Text: "Invalid  or Unsolveable Maze! \nPlease check maze.txt in /Assets/Data/maze.txt"
 --- !u!222 &1235814243
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -925,4 +925,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5f6f4394ecb4e4aa5277670c059b0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementInterval: 0.25
+  MovementInterval: 0.15
