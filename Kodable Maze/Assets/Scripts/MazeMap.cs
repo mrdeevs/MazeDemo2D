@@ -63,7 +63,6 @@ public class MazeMap : MonoBehaviour
                 if (!nothingFound)
                 {
                     mazeByLines.Add(line);
-                    //Debug.Log("Adding line: " + line + " length: " + line.Length);
                 }
             }
 
@@ -128,7 +127,6 @@ public class MazeMap : MonoBehaviour
             // init player
             // start player movement by updating state machine
             player.transform.position = startTile.transform.position;
-            player.UpdatePlayerState(Player.PlayerState.Moving);
 
             // Destination
             // setup the destination tile
@@ -303,7 +301,6 @@ public class MazeMap : MonoBehaviour
                         // tiles that are already in the cur path. dont remove those
                         potentialPaths.AddRange(curPath);
                         mMaxLevel = level;
-                        //curTile.GetComponent<SpriteRenderer>().color = Color.red;
 
                         // SPECIAL EDGE CASE: only 1 empty row and 2 walls, set dest. level
                         if (mHeight == MinimumValidHeight && endTile.level == 0)
@@ -318,12 +315,6 @@ public class MazeMap : MonoBehaviour
         // clear the temporary storage for paths / cur
         // sort the existing paths to dead ends using level comparator
         potentialPaths.Sort(MapTile.SortByLevel);
-        // TEST colors for all possible solutions
-
-        /*foreach (MapTile tile in potentialPaths)
-        {
-            tile.GetComponent<SpriteRenderer>().color = Color.red;
-        }*/
 
         if (potentialPaths.Contains(endTile))
         {
