@@ -5,7 +5,7 @@ using UnityEngine;
 public class MazeMap : MonoBehaviour
 {
     public TextAsset mazeFile = null;
-    public GameObject wallPrefab, spacePrefab;
+    public GameObject wallPrefab, spacePrefab, errorPrefab;
     public Player player;
 
     private List<char> walls = new List<char>() { '-', '+', '|' };
@@ -14,8 +14,6 @@ public class MazeMap : MonoBehaviour
     private GameObject[,] maze;
     private MapTile startTile = null, endTile = null;
     private int mWidth, mHeight, mMaxLevel;
-
-    private const string Newline = "\n";
     private const int MinimumValidHeight = 3;
 
     // Start is called before the first frame update
@@ -75,6 +73,7 @@ public class MazeMap : MonoBehaviour
             if (mazeByLines.Count < MinimumValidHeight)
             {
                 Debug.Log("Maze format or size is invalid");
+                ShowError(true);
                 Application.Quit();
             }
 
@@ -134,7 +133,6 @@ public class MazeMap : MonoBehaviour
             // Destination
             // setup the destination tile
             endTile = maze[mWidth - 1, 1].GetComponent<MapTile>();
-            endTile.GetComponent<SpriteRenderer>().color = Color.magenta;
         }
         else
         {
@@ -157,7 +155,7 @@ public class MazeMap : MonoBehaviour
         // create a list for the 4 possible next moves
         // x, y maps directly from world space to our 2D array
         bestPath.Add(destinationTile);
-        destinationTile.GetComponent<SpriteRenderer>().color = Color.yellow;
+        //destinationTile.GetComponent<SpriteRenderer>().color = Color.yellow;
         List<MapTile> adjSpaces = new List<MapTile>(4);
         int x = (int)destinationTile.transform.position.x;
         int y = (int)destinationTile.transform.position.y;
@@ -344,5 +342,11 @@ public class MazeMap : MonoBehaviour
     public MapTile getPlayerStart()
     {
         return startTile;
+    }
+
+    public void ShowError(bool showError)
+    {
+        errorPrefab.SetActive(showError);
+        
     }
 }

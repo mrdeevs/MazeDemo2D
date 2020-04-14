@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
             mMoves.Reverse();
         } else
         {
-            Debug.Log("Show the invalid UI!");
+            mMap.ShowError(true);
         }
     }
 
