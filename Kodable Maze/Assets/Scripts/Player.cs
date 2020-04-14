@@ -38,7 +38,8 @@ public class Player : MonoBehaviour
             // search at the destination position at the end
             mMoves = correctPaths;
             mMoves.Reverse();
-        } else
+        }
+        else
         {
             mMap.ShowError(true);
         }

@@ -137,9 +137,8 @@ public class MazeMap : MonoBehaviour
         else
         {
             Debug.Log("Invalid File input for maze data!");
-            // todo show a dialogue in game view
-            //
-            //
+            ShowError(true);
+            Application.Quit();
         }
     }
 
@@ -231,6 +230,9 @@ public class MazeMap : MonoBehaviour
 
     public List<MapTile> findAllPathsAndLevels(MapTile curTile, int level)
     {
+        if (curTile == null)
+            return null;
+
         // starting tile for search
         // current starting pos / player pos
         Vector3 curTilePos = curTile.transform.position;
@@ -318,6 +320,7 @@ public class MazeMap : MonoBehaviour
         // sort the existing paths to dead ends using level comparator
         potentialPaths.Sort(MapTile.SortByLevel);
         // TEST colors for all possible solutions
+
         /*foreach (MapTile tile in potentialPaths)
         {
             tile.GetComponent<SpriteRenderer>().color = Color.red;
@@ -347,6 +350,6 @@ public class MazeMap : MonoBehaviour
     public void ShowError(bool showError)
     {
         errorPrefab.SetActive(showError);
-        
+
     }
 }
