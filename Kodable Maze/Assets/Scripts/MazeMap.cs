@@ -67,6 +67,15 @@ public class MazeMap : MonoBehaviour
                 }
             }
 
+            // TODO - the minimum size of a grid maze must be
+            // at least 2 walls and 1 empty row of spaces to walk in
+            // otherwise its invalid
+            if(mazeByLines.Count < 3)
+            {
+                Debug.Log("Maze format or size is invalid");
+                return;
+            }
+
             // map starts at 0,0
             // also find out the dimensions using new line sub str
             // new line for max X, and divide that from the total character count to get the number of levels, Y
@@ -119,6 +128,11 @@ public class MazeMap : MonoBehaviour
             // start player movement by updating state machine
             player.transform.position = startTile.transform.position;
             player.UpdatePlayerState(Player.PlayerState.Moving);
+
+            // Destination
+            // setup the destination tile
+            endTile = maze[mWidth - 1, 1].GetComponent<MapTile>();
+            endTile.GetComponent<SpriteRenderer>().color = Color.magenta;
         }
         else
         {
@@ -207,7 +221,6 @@ public class MazeMap : MonoBehaviour
         // with the best adjacent tile
         if (bestTile == startTile || bestTile == null)
         {
-            Debug.Log("Found the starting tile, we're done!");
             endTile.GetComponent<SpriteRenderer>().color = Color.green;
         }
         else
@@ -289,6 +302,7 @@ public class MazeMap : MonoBehaviour
                         // tiles that are already in the cur path. dont remove those
                         potentialPaths.AddRange(curPath);
                         mMaxLevel = level;
+                        //curTile.GetComponent<SpriteRenderer>().color = Color.red;
                     }
                 }
             }
@@ -303,11 +317,6 @@ public class MazeMap : MonoBehaviour
         {
             tile.GetComponent<SpriteRenderer>().color = Color.green;
         }*/
-
-        // reverse from the destination by level
-        // color the destination block
-        // store the destination / end tile here
-        endTile = potentialPaths[potentialPaths.Count - 1];
 
         // return the solved path, largest level
         return potentialPaths;
