@@ -75,6 +75,7 @@ public class MazeMap : MonoBehaviour
                 Debug.Log("Maze format or size is invalid");
                 ShowError(true);
                 Application.Quit();
+                return;
             }
 
             // map starts at 0,0
